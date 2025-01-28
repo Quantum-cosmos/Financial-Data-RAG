@@ -22,14 +22,14 @@ def main():
     # Initialize session state
     initialize_session_state()
     
-    # Custom CSS
+    # Custom CSS with green theme
     st.markdown("""
     <style>
     .main-title {
         text-align: center;
         padding: 20px;
         color: #1f1f1f;
-        background: linear-gradient(90deg, #f0f2f6, #e6e9ef);
+        background: linear-gradient(90deg, #e8f5e9, #c8e6c9);
         border-radius: 10px;
         margin-bottom: 30px;
     }
@@ -38,39 +38,64 @@ def main():
     }
     .stTabs [data-baseweb="tab"] {
         height: 50px;
-        background-color: #ffffff;
+        background-color: #e8f5e9;
         border-radius: 5px;
         padding: 10px 20px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     .stTabs [aria-selected="true"] {
-        background-color: #1e3d59;
+        background-color: #2e7d32;
         color: white;
     }
     /* Custom button styles */
     .stButton button {
-        background-color: #1e3d59 !important;
+        background-color: #2e7d32 !important;
         color: white !important;
         font-weight: bold !important;
         border: none !important;
     }
     .stButton button:hover {
-        background-color: #2b5480 !important;
+        background-color: #1b5e20 !important;
     }
     /* Secondary button style */
     .secondary-btn button {
-        background-color: #4a4a4a !important;
+        background-color: #81c784 !important;
     }
     .secondary-btn button:hover {
-        background-color: #5a5a5a !important;
+        background-color: #66bb6a !important;
     }
     /* Document info box */
     .doc-info {
-        background-color: #f0f2f6;
+        background-color: #e8f5e9;
         padding: 20px;
         border-radius: 10px;
         margin: 20px 0;
-        border-left: 5px solid #1e3d59;
+        border-left: 5px solid #2e7d32;
+    }
+    /* Success message */
+    .success {
+        background-color: #e8f5e9;
+        padding: 10px;
+        border-radius: 5px;
+        color: #2e7d32;
+    }
+    /* Info message */
+    .info {
+        background-color: #e8f5e9;
+        padding: 10px;
+        border-radius: 5px;
+    }
+    /* Sidebar */
+    .css-1d391kg {
+        background-color: #f1f8e9;
+    }
+    /* Input fields */
+    .stTextInput input {
+        border-color: #81c784;
+    }
+    .stTextInput input:focus {
+        border-color: #2e7d32;
+        box-shadow: 0 0 0 1px #2e7d32;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -96,12 +121,14 @@ def main():
                     st.session_state.gemini_api_key = gemini_key
                     st.session_state.llama_api_key = llama_key
                     st.session_state.api_keys_set = True
-                    st.success("✅ API keys saved successfully!")
+                    st.markdown('<div class="success">✅ API keys saved successfully!</div>', 
+                              unsafe_allow_html=True)
                     st.rerun()
                 else:
                     st.error("❌ Please enter both API keys")
         else:
-            st.success("✅ API Keys configured")
+            st.markdown('<div class="success">✅ API Keys configured</div>', 
+                       unsafe_allow_html=True)
             with st.container():
                 st.markdown('<div class="secondary-btn">', unsafe_allow_html=True)
                 if st.button("🔄 Change API Keys", type="secondary", use_container_width=True):
@@ -109,7 +136,7 @@ def main():
                     st.rerun()
                 st.markdown('</div>', unsafe_allow_html=True)
         
-        # Document upload section (only shown after API keys are set)
+        # Document upload section
         if st.session_state.api_keys_set:
             st.subheader("📄 Upload Document")
             uploaded_file = st.file_uploader("Choose a PDF file", type=['pdf'])
@@ -165,7 +192,8 @@ def main():
                         with st.spinner('🤔 Thinking...'):
                             response = st.session_state.query_engine.query(question)
                             st.markdown("### Answer:")
-                            st.markdown(f"```{str(response)}```")
+                            st.markdown(f'''<div class="doc-info">{str(response)}</div>''', 
+                                      unsafe_allow_html=True)
         
         # Chat Tab
         with tab2:
@@ -188,9 +216,11 @@ def main():
                 st.markdown('</div>', unsafe_allow_html=True)
     
     elif not st.session_state.api_keys_set:
-        st.info("👈 Please configure your API keys in the sidebar to begin.")
+        st.markdown('<div class="info">👈 Please configure your API keys in the sidebar to begin.</div>', 
+                   unsafe_allow_html=True)
     else:
-        st.info("👈 Please upload a PDF document in the sidebar to begin your analysis.")
+        st.markdown('<div class="info">👈 Please upload a PDF document in the sidebar to begin your analysis.</div>', 
+                   unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
