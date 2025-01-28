@@ -110,15 +110,16 @@ def main():
 
     .answer-box {
     background-color: #f1f8e9;
-    # padding: 10px 10px; /* Add more horizontal padding */
+    padding: 20px;
     border-radius: 10px;
     border-left: 5px solid #4caf50;
-    margin: 10px auto; /* Center the box */
+    margin: 15px auto; /* Centered alignment */
     color: #263238;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    min-width: 80%; /* Ensure it doesn't span too wide */
-    max-width: 90%; /* Ensure it doesn't span too wide */
-    }
+    max-width: 800px; /* Wider answer box */
+    width: 100%;
+}
+
     </style>
     """, unsafe_allow_html=True)
 
