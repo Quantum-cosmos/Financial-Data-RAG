@@ -1,12 +1,10 @@
 import logging
 from typing import List
 from llama_index.llms.gemini import Gemini
-from llama_index.core import Settings, StorageContext, VectorStoreIndex
+from llama_index.core import Settings, VectorStoreIndex
 from llama_index.core.node_parser import SimpleNodeParser
 from llama_index.embeddings.gemini import GeminiEmbedding
-from llama_index.vector_stores.chroma import ChromaVectorStore
 from llama_parse import LlamaParse
-import chromadb
 import google.generativeai as genai
 
 class DocumentProcessor:
@@ -37,11 +35,8 @@ class DocumentProcessor:
         # Set global configurations
         Settings.llm = self.llm
         Settings.embed_model = self.embed_model
-        
-        # Initialize Chroma client
-        self.chroma_client = chromadb.PersistentClient(path="./chroma_db")
     
-    def process_document(self, file_path: str, collection_name: str):
+    def process_document(self, file_path: str):
         """Process document and create query engine"""
         # Parse document
         documents = self.parse_document(file_path)
@@ -49,10 +44,8 @@ class DocumentProcessor:
         # Process nodes
         nodes = self.process_nodes(documents)
         
-        # Create RAG pipeline
-        query_engine = self.create_rag_pipeline(nodes, collection_name)
-        
-        return query_engine
+        # Create index and query engine
+        return self.create_rag_pipeline(nodes)
     
     def parse_document(self, file_path: str) -> List:
         """Parse document using LlamaParse"""
@@ -70,24 +63,10 @@ class DocumentProcessor:
         )
         return node_parser.get_nodes_from_documents(documents)
     
-    def create_rag_pipeline(self, nodes: List, collection_name: str):
-        """Create RAG pipeline with vector store"""
-        # Create or get collection
-        try:
-            collection = self.chroma_client.get_collection(name=collection_name)
-        except:
-            collection = self.chroma_client.create_collection(
-                name=collection_name,
-                metadata={"hnsw:space": "cosine"}
-            )
-        
-        # Create vector store and index
-        vector_store = ChromaVectorStore(chroma_collection=collection)
-        storage_context = StorageContext.from_defaults(vector_store=vector_store)
-        
+    def create_rag_pipeline(self, nodes: List):
+        """Create RAG pipeline with FAISS vector store"""
         index = VectorStoreIndex(
             nodes=nodes,
-            storage_context=storage_context,
             show_progress=True
         )
         
