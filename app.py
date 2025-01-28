@@ -109,17 +109,16 @@ def main():
     }
 
     .answer-box {
-    background-color: #f1f8e9;
-    padding: 20px;
-    border-radius: 10px;
-    border-left: 5px solid #4caf50;
-    margin: 15px auto; /* Centered alignment */
-    color: #263238;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    max-width: 800px; /* Wider answer box */
-    width: 100%;
-}
-
+        background-color: #f1f8e9;
+        padding: 20px;
+        border-radius: 10px;
+        border-left: 5px solid #4caf50;
+        margin: 15px auto;
+        color: #263238;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        max-width: 800px;
+        width: 100%;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -203,12 +202,13 @@ def main():
                     if question:
                         with st.spinner('🤔 Thinking...'):
                             response = st.session_state.query_engine.query(question)
-                            st.markdown(f"""
-                            <div class="answer-box">
-                                <strong>Answer:</strong><br>
-                                {response}
-                            </div>
-                            """, unsafe_allow_html=True)
+                            with col1:
+                                st.markdown(f"""
+                                <div class="answer-box">
+                                    <strong>Answer:</strong><br>
+                                    {response}
+                                </div>
+                                """, unsafe_allow_html=True)
                 st.markdown('</div>', unsafe_allow_html=True)
 
         with tab2:
