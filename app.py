@@ -6,7 +6,6 @@ from document_processor import DocumentProcessor
 from chat_interface import ChatInterface
 
 def initialize_session_state():
-    """Initialize session state variables"""
     if 'api_keys_set' not in st.session_state:
         st.session_state.api_keys_set = False
     if 'messages' not in st.session_state:
@@ -19,139 +18,147 @@ def main():
         layout="wide"
     )
     
-    # Initialize session state
     initialize_session_state()
     
-    # Custom CSS with green theme
+    # Updated CSS with better contrast
     st.markdown("""
     <style>
     .main-title {
         text-align: center;
         padding: 20px;
         color: #1f1f1f;
-        background: linear-gradient(90deg, #e8f5e9, #c8e6c9);
+        background: linear-gradient(90deg, #f0f2f6, #e6e9ef);
         border-radius: 10px;
         margin-bottom: 30px;
     }
+    
     .stTabs [data-baseweb="tab-list"] {
         gap: 24px;
     }
+    
     .stTabs [data-baseweb="tab"] {
         height: 50px;
-        background-color: #e8f5e9;
+        background-color: #f0f2f6;
         border-radius: 5px;
         padding: 10px 20px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        color: #1f1f1f !important;
     }
+    
     .stTabs [aria-selected="true"] {
-        background-color: #2e7d32;
-        color: lightblue;
+        background-color: #2c3e50 !important;
+        color: white !important;
     }
-    /* Custom button styles */
-    .stButton button {
-        background-color: #2e7d32 !important;
-        color: lightblue !important;
-        font-weight: bold !important;
+    
+    /* Primary button style */
+    .primary-btn button {
+        background-color: #2c3e50 !important;
+        color: #ffffff !important;
+        font-weight: 600 !important;
         border: none !important;
+        text-shadow: none !important;
     }
-    .stButton button:hover {
-        background-color: #1b5e20 !important;
+    .primary-btn button:hover {
+        background-color: #34495e !important;
     }
+    
     /* Secondary button style */
     .secondary-btn button {
-        background-color: #81c784 !important;
+        background-color: #34495e !important;
+        color: #ffffff !important;
+        font-weight: 600 !important;
+        border: none !important;
+        text-shadow: none !important;
     }
     .secondary-btn button:hover {
-        background-color: #66bb6a !important;
+        background-color: #2c3e50 !important;
     }
+    
     /* Document info box */
     .doc-info {
-        background-color: #e8f5e9;
+        background-color: #ffffff;
         padding: 20px;
         border-radius: 10px;
         margin: 20px 0;
-        border-left: 5px solid #2e7d32;
+        border: 1px solid #e0e0e0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
-    /* Success message */
-    .success {
-        background-color: #e8f5e9;
-        padding: 10px;
-        border-radius: 5px;
-        color: #2e7d32;
+    
+    .doc-info h3 {
+        color: #2c3e50;
+        margin-bottom: 15px;
     }
-    /* Info message */
-    .info {
-        background-color: #e8f5e9;
-        padding: 10px;
-        border-radius: 5px;
+    
+    .doc-info p {
+        color: #2c3e50;
+        margin-bottom: 8px;
+        font-size: 16px;
     }
-    /* Sidebar */
-    .css-1d391kg {
-        background-color: #f1f8e9;
+    
+    /* Chat message styling */
+    .chat-message {
+        background-color: #ffffff;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 10px 0;
+        border: 1px solid #e0e0e0;
     }
-    /* Input fields */
-    .stTextInput input {
-        border-color: #81c784;
-    }
-    .stTextInput input:focus {
-        border-color: #2e7d32;
-        box-shadow: 2 2 2 3px #2e7d32;
+    
+    /* Answer box styling */
+    .answer-box {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 4px solid #2c3e50;
+        margin: 15px 0;
+        color: #2c3e50;
     }
     </style>
     """, unsafe_allow_html=True)
     
-    # Main title
-    st.markdown('<div class="main-title"><h1>📚 Interactive Document Analysis System</h1></div>', 
+    st.markdown('<div class="main-title"><h1>📚 Interactive Financial statement Analysis System</h1></div>', 
                 unsafe_allow_html=True)
     
-    # Sidebar configuration
     with st.sidebar:
         st.header("Configuration")
         
-        # API Keys section
         st.subheader("🔑 API Keys")
         if not st.session_state.api_keys_set:
-            gemini_key = st.text_input("Gemini API Key:", type="password", 
-                                     placeholder="Enter your Gemini API key")
-            llama_key = st.text_input("LlamaParse API Key:", type="password", 
-                                    placeholder="Enter your LlamaParse API key")
+            gemini_key = st.text_input("Gemini API Key:", type="password")
+            llama_key = st.text_input("LlamaParse API Key:", type="password")
             
+            st.markdown('<div class="primary-btn">', unsafe_allow_html=True)
             if st.button("💫 Save API Keys", type="primary", use_container_width=True):
                 if gemini_key and llama_key:
                     st.session_state.gemini_api_key = gemini_key
                     st.session_state.llama_api_key = llama_key
                     st.session_state.api_keys_set = True
-                    st.markdown('<div class="success">✅ API keys saved successfully!</div>', 
-                              unsafe_allow_html=True)
+                    st.success("✅ API keys saved successfully!")
                     st.rerun()
                 else:
                     st.error("❌ Please enter both API keys")
+            st.markdown('</div>', unsafe_allow_html=True)
         else:
-            st.markdown('<div class="success">✅ API Keys configured</div>', 
-                       unsafe_allow_html=True)
-            with st.container():
-                st.markdown('<div class="secondary-btn">', unsafe_allow_html=True)
-                if st.button("🔄 Change API Keys", type="secondary", use_container_width=True):
-                    st.session_state.api_keys_set = False
-                    st.rerun()
-                st.markdown('</div>', unsafe_allow_html=True)
+            st.success("✅ API Keys configured")
+            st.markdown('<div class="secondary-btn">', unsafe_allow_html=True)
+            if st.button("🔄 Change API Keys", use_container_width=True):
+                st.session_state.api_keys_set = False
+                st.rerun()
+            st.markdown('</div>', unsafe_allow_html=True)
         
-        # Document upload section
         if st.session_state.api_keys_set:
             st.subheader("📄 Upload Document")
             uploaded_file = st.file_uploader("Choose a PDF file", type=['pdf'])
             
             if 'query_engine' in st.session_state:
                 st.markdown('<div class="secondary-btn">', unsafe_allow_html=True)
-                if st.button("🗑️ Clear Document", type="secondary", use_container_width=True):
+                if st.button("🗑️ Clear Document", use_container_width=True):
                     st.session_state.query_engine = None
                     st.session_state.messages = []
                     st.rerun()
                 st.markdown('</div>', unsafe_allow_html=True)
     
-    # Main content area
     if st.session_state.api_keys_set and uploaded_file:
-        # Display document info
         st.markdown(f'''
         <div class="doc-info">
             <h3>📄 Current Document</h3>
@@ -160,7 +167,6 @@ def main():
         </div>
         ''', unsafe_allow_html=True)
         
-        # Process document if not already processed
         if 'query_engine' not in st.session_state:
             with st.spinner('🔄 Processing document... Please wait.'):
                 processor = DocumentProcessor(
@@ -175,10 +181,8 @@ def main():
                 st.session_state.query_engine = processor.process_document(tmp_path)
                 os.unlink(tmp_path)
         
-        # Q&A and Chat tabs
         tab1, tab2 = st.tabs(["🔍 Q&A", "💬 Chat"])
         
-        # Q&A Tab
         with tab1:
             st.subheader("Ask Questions About Your Document")
             question = st.text_input("Your Question:", 
@@ -187,19 +191,30 @@ def main():
             
             col1, col2, col3 = st.columns([3, 1, 1])
             with col2:
+                st.markdown('<div class="primary-btn">', unsafe_allow_html=True)
                 if st.button("🔍 Get Answer", type="primary", use_container_width=True):
                     if question:
                         with st.spinner('🤔 Thinking...'):
                             response = st.session_state.query_engine.query(question)
-                            st.markdown("### Answer:")
-                            st.markdown(f'''<div class="doc-info">{str(response)}</div>''', 
-                                      unsafe_allow_html=True)
+                            st.markdown("""
+                            <div class="answer-box">
+                                <strong>Answer:</strong><br>
+                                {response}
+                            </div>
+                            """.format(response=str(response)), unsafe_allow_html=True)
+                st.markdown('</div>', unsafe_allow_html=True)
         
-        # Chat Tab
         with tab2:
             st.subheader("Chat with Your Document")
             chat_interface = ChatInterface(st.session_state.query_engine)
-            chat_interface.display_chat_history()
+            
+            for message in st.session_state.messages:
+                st.markdown(f"""
+                <div class="chat-message" style="background-color: {'#f0f2f6' if message['role'] == 'assistant' else '#ffffff'}">
+                    <strong>{'🤖 Assistant' if message['role'] == 'assistant' else '👤 You'}:</strong><br>
+                    {message['content']}
+                </div>
+                """, unsafe_allow_html=True)
             
             user_input = st.chat_input("Type your message...")
             if user_input:
@@ -210,17 +225,15 @@ def main():
             col1, col2, col3 = st.columns([3, 1, 1])
             with col2:
                 st.markdown('<div class="secondary-btn">', unsafe_allow_html=True)
-                if st.button("🧹 Clear Chat", type="secondary", use_container_width=True):
+                if st.button("🧹 Clear Chat", use_container_width=True):
                     chat_interface.clear_chat_history()
                     st.rerun()
                 st.markdown('</div>', unsafe_allow_html=True)
     
     elif not st.session_state.api_keys_set:
-        st.markdown('<div class="info">👈 Please configure your API keys in the sidebar to begin.</div>', 
-                   unsafe_allow_html=True)
+        st.info("👈 Please configure your API keys in the sidebar to begin.")
     else:
-        st.markdown('<div class="info">👈 Please upload a PDF document in the sidebar to begin your analysis.</div>', 
-                   unsafe_allow_html=True)
+        st.info("👈 Please upload a PDF document in the sidebar to begin your analysis.")
 
 if __name__ == "__main__":
     main()
