@@ -116,7 +116,8 @@ def main():
     margin: 10px auto; /* Center the box */
     color: #263238;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    max-width: 80%; /* Ensure it doesn't span too wide */
+    min-width: 80%; /* Ensure it doesn't span too wide */
+    max-width: 90%; /* Ensure it doesn't span too wide */
     }
     </style>
     """, unsafe_allow_html=True)
