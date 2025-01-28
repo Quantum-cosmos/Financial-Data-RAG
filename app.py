@@ -4,7 +4,6 @@ import os
 from config import load_api_keys
 from document_processor import DocumentProcessor
 from chat_interface import ChatInterface
-import base64
 
 def initialize_session_state():
     """Initialize session state variables"""
@@ -12,12 +11,6 @@ def initialize_session_state():
         st.session_state.api_keys_set = False
     if 'messages' not in st.session_state:
         st.session_state.messages = []
-
-def display_pdf(file):
-    """Display the PDF in the Streamlit app"""
-    base64_pdf = base64.b64encode(file.read()).decode('utf-8')
-    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="600" type="application/pdf"></iframe>'
-    st.markdown(pdf_display, unsafe_allow_html=True)
 
 def main():
     st.set_page_config(
@@ -51,8 +44,33 @@ def main():
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     .stTabs [aria-selected="true"] {
-        background-color: #0e4c92;
+        background-color: #1e3d59;
         color: white;
+    }
+    /* Custom button styles */
+    .stButton button {
+        background-color: #1e3d59 !important;
+        color: white !important;
+        font-weight: bold !important;
+        border: none !important;
+    }
+    .stButton button:hover {
+        background-color: #2b5480 !important;
+    }
+    /* Secondary button style */
+    .secondary-btn button {
+        background-color: #4a4a4a !important;
+    }
+    .secondary-btn button:hover {
+        background-color: #5a5a5a !important;
+    }
+    /* Document info box */
+    .doc-info {
+        background-color: #f0f2f6;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+        border-left: 5px solid #1e3d59;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -84,22 +102,37 @@ def main():
                     st.error("❌ Please enter both API keys")
         else:
             st.success("✅ API Keys configured")
-            if st.button("🔄 Change API Keys", type="secondary", use_container_width=True):
-                st.session_state.api_keys_set = False
-                st.rerun()
+            with st.container():
+                st.markdown('<div class="secondary-btn">', unsafe_allow_html=True)
+                if st.button("🔄 Change API Keys", type="secondary", use_container_width=True):
+                    st.session_state.api_keys_set = False
+                    st.rerun()
+                st.markdown('</div>', unsafe_allow_html=True)
         
         # Document upload section (only shown after API keys are set)
         if st.session_state.api_keys_set:
             st.subheader("📄 Upload Document")
             uploaded_file = st.file_uploader("Choose a PDF file", type=['pdf'])
             
-            if 'query_engine' in st.session_state and st.button("🗑️ Clear Document", type="secondary"):
-                st.session_state.query_engine = None
-                st.session_state.messages = []
-                st.rerun()
+            if 'query_engine' in st.session_state:
+                st.markdown('<div class="secondary-btn">', unsafe_allow_html=True)
+                if st.button("🗑️ Clear Document", type="secondary", use_container_width=True):
+                    st.session_state.query_engine = None
+                    st.session_state.messages = []
+                    st.rerun()
+                st.markdown('</div>', unsafe_allow_html=True)
     
     # Main content area
     if st.session_state.api_keys_set and uploaded_file:
+        # Display document info
+        st.markdown(f'''
+        <div class="doc-info">
+            <h3>📄 Current Document</h3>
+            <p><strong>Filename:</strong> {uploaded_file.name}</p>
+            <p><strong>Size:</strong> {round(uploaded_file.size/1024, 2)} KB</p>
+        </div>
+        ''', unsafe_allow_html=True)
+        
         # Process document if not already processed
         if 'query_engine' not in st.session_state:
             with st.spinner('🔄 Processing document... Please wait.'):
@@ -115,17 +148,11 @@ def main():
                 st.session_state.query_engine = processor.process_document(tmp_path)
                 os.unlink(tmp_path)
         
-        # Document preview and interaction tabs
-        tab1, tab2, tab3 = st.tabs(["📄 Document", "🔍 Q&A", "💬 Chat"])
-        
-        # Document Preview Tab
-        with tab1:
-            st.subheader("Document Preview")
-            uploaded_file.seek(0)  # Reset file pointer
-            display_pdf(uploaded_file)
+        # Q&A and Chat tabs
+        tab1, tab2 = st.tabs(["🔍 Q&A", "💬 Chat"])
         
         # Q&A Tab
-        with tab2:
+        with tab1:
             st.subheader("Ask Questions About Your Document")
             question = st.text_input("Your Question:", 
                                    placeholder="Ask anything about the document...",
@@ -141,7 +168,7 @@ def main():
                             st.markdown(f"```{str(response)}```")
         
         # Chat Tab
-        with tab3:
+        with tab2:
             st.subheader("Chat with Your Document")
             chat_interface = ChatInterface(st.session_state.query_engine)
             chat_interface.display_chat_history()
@@ -154,9 +181,11 @@ def main():
             
             col1, col2, col3 = st.columns([3, 1, 1])
             with col2:
+                st.markdown('<div class="secondary-btn">', unsafe_allow_html=True)
                 if st.button("🧹 Clear Chat", type="secondary", use_container_width=True):
                     chat_interface.clear_chat_history()
                     st.rerun()
+                st.markdown('</div>', unsafe_allow_html=True)
     
     elif not st.session_state.api_keys_set:
         st.info("👈 Please configure your API keys in the sidebar to begin.")
