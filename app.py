@@ -45,12 +45,12 @@ def main():
     }
     .stTabs [aria-selected="true"] {
         background-color: #2e7d32;
-        color: white;
+        color: lightblue;
     }
     /* Custom button styles */
     .stButton button {
         background-color: #2e7d32 !important;
-        color: white !important;
+        color: lightblue !important;
         font-weight: bold !important;
         border: none !important;
     }
@@ -95,7 +95,7 @@ def main():
     }
     .stTextInput input:focus {
         border-color: #2e7d32;
-        box-shadow: 0 0 0 1px #2e7d32;
+        box-shadow: 2 2 2 3px #2e7d32;
     }
     </style>
     """, unsafe_allow_html=True)
