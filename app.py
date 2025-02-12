@@ -13,7 +13,7 @@ def initialize_session_state():
 
 def main():
     st.set_page_config(
-        page_title="Document Q&A and Chat System",
+        page_title="Electronic Healhth Record Q&A and Chat System",
         page_icon="📚",
         layout="wide"
     )
