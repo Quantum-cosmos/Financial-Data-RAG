@@ -14,7 +14,7 @@ def initialize_session_state():
 def main():
     st.set_page_config(
         page_title="Electronic Healhth Record Q&A and Chat System",
-        page_icon="📚",
+        page_icon="🩺📋💼",
         layout="wide"
     )
 
@@ -122,7 +122,7 @@ def main():
     </style>
     """, unsafe_allow_html=True)
 
-    st.markdown('<div class="main-title"><h1>📚 Interactive Electronic Healhth Record Analysis System</h1></div>', 
+    st.markdown('<div class="main-title"><h1>🩺📋💼 Interactive Electronic Healhth Record Analysis System</h1></div>', 
                 unsafe_allow_html=True)
 
     with st.sidebar:
