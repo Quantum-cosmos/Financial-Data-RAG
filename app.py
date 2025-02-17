@@ -122,7 +122,7 @@ def main():
     </style>
     """, unsafe_allow_html=True)
 
-    st.markdown('<div class="main-title"><h1>📋 Interactive Financial statements Record Analysis System</h1></div>', 
+    st.markdown('<div class="main-title"><h1>📋 Interactive Financial statements Analysis System</h1></div>', 
                 unsafe_allow_html=True)
 
     with st.sidebar:
